@@ -1,0 +1,29 @@
+# fireblocks-signer-transport
+
+[![Crates.io](https://img.shields.io/crates/v/fireblocks-signer-transport.svg)](https://crates.io/crates/fireblocks-signer-transport)
+[![Docs.rs](https://docs.rs/fireblocks-signer-transport/badge.svg)](https://docs.rs/fireblocks-signer-transport)
+[![CI](https://github.com/CarteraMesh/fireblocks-signer-transport/workflows/CI/badge.svg)](https://github.com/CarteraMesh/fireblocks-signer-transport/actions)
+[![Cov](https://codecov.io/github/CarteraMesh/fireblocks-signer-transport/graph/badge.svg?token=dILa1k9tlW)](https://codecov.io/github/CarteraMesh/fireblocks-signer-transport)
+
+## Installation
+
+### Cargo
+
+* Install the rust toolchain in order to have cargo installed by following
+  [this](https://www.rust-lang.org/tools/install) guide.
+* run `cargo install fireblocks-signer-transport`
+
+## License
+
+ * MIT license
+   ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
+
+## Contribution
+
+Unless you explicitly state otherwise, any contribution intentionally submitted
+for inclusion in the work by you, as defined in the Apache-2.0 license, shall be
+dual licensed as above, without any additional terms or conditions.
+
+See [CONTRIBUTING.md](CONTRIBUTING.md).
