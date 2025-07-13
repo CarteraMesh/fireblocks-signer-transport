@@ -13,10 +13,10 @@ mod error;
 mod jwt;
 mod models;
 
-pub use error::Error;
+pub use error::FireblocksClientError;
 pub use jwt::JwtSigner;
 pub use models::*;
-pub type Result<T> = std::result::Result<T, error::Error>;
+pub type Result<T> = std::result::Result<T, error::FireblocksClientError>;
 
 /// The production Fireblocks API endpoint.
 pub const FIREBLOCKS_API: &str = "https://api.fireblocks.io";
@@ -310,14 +310,14 @@ impl Client {
         let status = resp.status();
         let body = resp.text()?;
         if !status.is_success() {
-            return Err(crate::Error::FireblocksServerError(body));
+            return Err(crate::FireblocksClientError::FireblocksServerError(body));
         }
 
         tracing::trace!("body response: {body}");
         let result: serde_json::Result<T> = serde_json::from_str(&body);
         match result {
             Ok(r) => Ok(r),
-            Err(e) => Err(crate::Error::JsonParseErr(format!(
+            Err(e) => Err(crate::FireblocksClientError::JsonParseErr(format!(
                 "Error {e}\nFailed to parse\n{body}"
             ))),
         }
@@ -351,7 +351,9 @@ impl Client {
         let signed = self.jwt.sign(&path, &[])?;
         let result: VaultAddressesResponse = self.send(self.client.get(url), signed)?;
         if result.addresses.is_empty() {
-            return Err(crate::Error::FireblocksNoAddress(vault.to_string()));
+            return Err(crate::FireblocksClientError::FireblocksNoAddress(
+                vault.to_string(),
+            ));
         }
         Ok(result.addresses[0].address.clone())
     }
