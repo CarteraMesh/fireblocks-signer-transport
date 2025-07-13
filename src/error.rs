@@ -1,7 +1,7 @@
 use thiserror::Error;
 
 #[derive(Debug, Error)]
-pub enum Error {
+pub enum FireblocksClientError {
     #[error("Failed to get vault account {0}")]
     FireblocksVaultError(String),
 
