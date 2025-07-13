@@ -16,7 +16,7 @@ concurrency:
 name: safety
 jobs:
   sanitizers:
-    if: false
+    if: true
     runs-on: ubicloud-standard-2
     steps:
       - uses: actions/checkout@v4

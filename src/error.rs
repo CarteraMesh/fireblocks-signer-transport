@@ -5,9 +5,6 @@ pub enum Error {
     #[error("Failed to get vault account {0}")]
     FireblocksVaultError(String),
 
-    #[error("Failed to deserialize solana message {0}")]
-    InvalidMessage(String),
-
     #[error("No signature available {0}")]
     FireblocksNoSig(String),
 
