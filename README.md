@@ -13,6 +13,56 @@
   [this](https://www.rust-lang.org/tools/install) guide.
 * run `cargo install fireblocks-signer-transport`
 
+## Development
+
+### Prerequisites
+
+- **Rust Nightly**: Required for code formatting with advanced features
+  ```bash
+  rustup install nightly
+  ```
+
+### Getting Started
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/CarteraMesh/fireblocks-signer-transport.git
+   cd fireblocks-signer-transport
+   ```
+
+2. **Set up environment**
+   ```bash
+   # Copy and configure environment variables
+   cp env-sample .env
+
+   # Install Rust nightly for formatting
+   rustup install nightly
+   ```
+
+3. **Build and test**
+   ```bash
+   # Build the project
+   cargo build
+
+   # Run tests (requires valid Fireblocks credentials in .env)
+   cargo test
+
+   # Format code (requires nightly)
+   cargo +nightly fmt --all
+   ```
+
+### Code Formatting
+
+This project uses advanced Rust formatting features that require nightly:
+
+```bash
+# Format all code
+cargo +nightly fmt --all
+
+# Check formatting
+cargo +nightly fmt --all -- --check
+```
+
 ## License
 
  * MIT license
