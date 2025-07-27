@@ -11,6 +11,7 @@ jobs:
 
   publish-cargo:
     name: Publishing to Cargo
+    if: false
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

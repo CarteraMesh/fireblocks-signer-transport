@@ -23,7 +23,7 @@ concurrency:
 name: check
 jobs:
   fmt:
-    runs-on: ubicloud-standard-2
+    runs-on: ${{ vars.RUNNER }}
     name: nightly fmt
     steps:
       - uses: actions/checkout@v4
@@ -35,9 +35,9 @@ jobs:
           components: rustfmt
       - name: cargo fmt --check
         run: |
-            cargo +nightly fmt --check --all
+          cargo +nightly fmt --check --all
   clippy:
-    runs-on: ubicloud-standard-2
+    runs-on: ${{ vars.RUNNER }}
     name: ${{ matrix.toolchain }} / clippy / ${{ matrix.features }}
     permissions:
       contents: read
@@ -46,13 +46,20 @@ jobs:
       fail-fast: false
       matrix:
         # Get early warning of new lints which are regularly introduced in beta channels.
-        toolchain: [stable, beta]
+        toolchain: [stable]
         features:
           - "default"
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - uses: ubicloud/rust-cache@v2
+        with:
+          cache-on-failure: "true"
+          cache-all-crates: "true"
+          cache-workspace-crates: "true"
+          workspaces: |
+            . -> target           
       - name: Install ${{ matrix.toolchain }}
         uses: dtolnay/rust-toolchain@master
         with:
@@ -61,21 +68,28 @@ jobs:
       - name: ${{ matrix.toolchain }} cargo clippy (${{ matrix.features }})
         uses: giraffate/clippy-action@v1
         with:
-          reporter: 'github-pr-check'
+          reporter: "github-pr-check"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           clippy_flags: ${{ matrix.features != 'default' && format('--features {0}', matrix.features) || '' }}
   semver:
-    runs-on: ubicloud-standard-2
+    runs-on: ${{ vars.RUNNER }}
     name: semver
     if: false
     steps:
       - uses: actions/checkout@v4
+      - uses: ubicloud/rust-cache@v2
+        with:
+          cache-on-failure: "true"
+          cache-all-crates: "true"
+          cache-workspace-crates: "true"
+          workspaces: |
+            . -> target       
       - name: Install stable
         uses: dtolnay/rust-toolchain@stable
       - name: cargo-semver-checks
         uses: obi1kenobi/cargo-semver-checks-action@v2
         # with:
-          # feature-group: ${{ matrix.features != 'default' && matrix.features || 'default-features' }}
+        # feature-group: ${{ matrix.features != 'default' && matrix.features || 'default-features' }}
   doc:
     # run docs generation on nightly rather than stable. This enables features like
     # https://doc.rust-lang.org/beta/unstable-book/language-features/doc-cfg.html which allows an
@@ -87,6 +101,13 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - uses: ubicloud/rust-cache@v2
+        with:
+          cache-on-failure: "true"
+          cache-all-crates: "true"
+          cache-workspace-crates: "true"
+          workspaces: |
+            . -> target           
       - name: Install nightly
         uses: dtolnay/rust-toolchain@nightly
       - name: Install cargo-docs-rs
@@ -96,12 +117,19 @@ jobs:
   hack:
     # cargo-hack checks combinations of feature flags to ensure that features are all additive
     # which is required for feature unification
-    runs-on: ubicloud-standard-2
+    runs-on: ${{ vars.RUNNER }}
     name: ubuntu / stable / features
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - uses: ubicloud/rust-cache@v2
+        with:
+          cache-on-failure: "true"
+          cache-all-crates: "true"
+          cache-workspace-crates: "true"
+          workspaces: |
+            . -> target           
       - name: Install stable
         uses: dtolnay/rust-toolchain@stable
       - name: cargo install cargo-hack
@@ -112,12 +140,19 @@ jobs:
         run: cargo hack --feature-powerset check
 
   udeps:
-    runs-on: ubicloud-standard-2
+    runs-on: ${{ vars.RUNNER }}
     name: udeps
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: true
+      - uses: ubicloud/rust-cache@v2
+        with:
+          cache-on-failure: "true"
+          cache-all-crates: "true"
+          cache-workspace-crates: "true"
+          workspaces: |
+            . -> target           
       - name: Install nightly
         uses: dtolnay/rust-toolchain@nightly
       - name: Cache Rust dependencies
@@ -128,4 +163,3 @@ jobs:
         uses: taiki-e/install-action@cargo-udeps
       - name: cargo udeps
         run: cargo udeps
-
