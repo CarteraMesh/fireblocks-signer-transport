@@ -36,6 +36,6 @@ tokio = { version = "1", features = [ "full"] }
 dotenvy= "0.15"
 lazy_static = "1.4.0"
 solana-sdk = { version = "2", default-features = false, features = ["full"] }
-solana-pubkey = { version = "2" }
+solana-pubkey = { version = "3" }
 solana-rpc-client = {version = "2" }
 spl-memo = { version = "6" }
