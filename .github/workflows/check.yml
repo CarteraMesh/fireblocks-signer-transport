@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ vars.RUNNER }}
     name: nightly fmt
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
       - name: Install nightyly
@@ -50,7 +50,7 @@ jobs:
         features:
           - "default"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
       - uses: ubicloud/rust-cache@v2
@@ -74,9 +74,9 @@ jobs:
   semver:
     runs-on: ${{ vars.RUNNER }}
     name: semver
-    if: false
+    if: true
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: ubicloud/rust-cache@v2
         with:
           cache-on-failure: "true"
@@ -98,7 +98,7 @@ jobs:
     runs-on: ubuntu-latest
     name: nightly / doc
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
       - uses: ubicloud/rust-cache@v2
@@ -120,7 +120,7 @@ jobs:
     runs-on: ${{ vars.RUNNER }}
     name: ubuntu / stable / features
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
       - uses: ubicloud/rust-cache@v2
@@ -143,7 +143,7 @@ jobs:
     runs-on: ${{ vars.RUNNER }}
     name: udeps
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           submodules: true
       - uses: ubicloud/rust-cache@v2

@@ -69,7 +69,6 @@ impl JwtSigner {
     }
 
     pub fn sign(&self, path: &str, body: &[u8]) -> Result<String, JwtError> {
-        // tracing::debug!("signing path:'{}' hasBody:{}", path, body.is_some());
         let header = Header::new(Algorithm::RS256);
         let claims = Claims::new(path, &self.api_key, body);
         let msg = jsonwebtoken::encode(&header, &claims, &self.key)?;
