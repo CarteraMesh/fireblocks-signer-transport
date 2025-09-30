@@ -83,3 +83,27 @@ fn test_client() -> anyhow::Result<()> {
     tracing::info!("sig {sig} txid {}", resp.id);
     Ok(())
 }
+
+#[test]
+fn test_sign_only() -> anyhow::Result<()> {
+    setup();
+    let (client, rpc) = client()?;
+    let pk = Pubkey::from_str(&client.address("0", "SOL_TEST")?)?;
+    tracing::info!("using pubkey {}", pk);
+    let hash = rpc.get_latest_blockhash()?;
+    let message = Message::new_with_blockhash(&[memo("fireblocks signer")], Some(&pk), &hash);
+    let tx = Transaction::new_unsigned(message);
+    let base64_tx = BASE64_STANDARD.encode(bincode::serialize(&tx)?);
+    let resp = client.sign_only("SOL_TEST", "0", base64_tx)?;
+    tracing::info!("txid {resp}");
+    let (resp, sig) = client.poll(
+        &resp.id,
+        std::time::Duration::from_secs(90),
+        Duration::from_secs(7),
+        |t| tracing::info!("transaction status {t}"),
+    )?;
+    assert!(sig.is_some());
+    let sig = sig.unwrap_or_default();
+    tracing::info!("signOnly: sig {sig} txid {}", resp.id);
+    Ok(())
+}
