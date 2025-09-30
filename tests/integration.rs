@@ -1,13 +1,27 @@
 use {
     base64::prelude::*,
     fireblocks_signer_transport::*,
+    solana_native_token::sol_str_to_lamports,
     solana_pubkey::Pubkey,
     solana_rpc_client::rpc_client::RpcClient,
-    solana_sdk::instruction::Instruction,
-    solana_sdk::message::Message,
-    solana_sdk::transaction::Transaction,
-    std::{env, str::FromStr, sync::Once},
-    std::{sync::Arc, time::Duration},
+    solana_sdk::{
+        instruction::Instruction,
+        message::Message,
+        signature::{Keypair, Signature},
+        signer::Signer,
+        transaction::Transaction,
+    },
+    solana_stake_interface::{
+        self,
+        instruction::{self as stake_instruction},
+        state::{Authorized, Lockup},
+    },
+    std::{
+        env,
+        str::FromStr,
+        sync::{Arc, Once},
+        time::Duration,
+    },
     tracing_subscriber::{EnvFilter, fmt::format::FmtSpan},
 };
 
@@ -87,12 +101,24 @@ fn test_client() -> anyhow::Result<()> {
 #[test]
 fn test_sign_only() -> anyhow::Result<()> {
     setup();
+    let stake_signer = Keypair::new();
+    let stake_account = stake_signer.pubkey();
     let (client, rpc) = client()?;
     let pk = Pubkey::from_str(&client.address("0", "SOL_TEST")?)?;
-    tracing::info!("using pubkey {}", pk);
+    tracing::info!("using pubkey {pk} {stake_account}");
     let hash = rpc.get_latest_blockhash()?;
-    let message = Message::new_with_blockhash(&[memo("fireblocks signer")], Some(&pk), &hash);
-    let tx = Transaction::new_unsigned(message);
+    let authorized = Authorized::auto(&pk);
+    let mut inxs = stake_instruction::create_account(
+        &pk,
+        &stake_account,
+        &authorized,
+        &Lockup::default(),
+        sol_str_to_lamports("1.4").ok_or(anyhow::format_err!("oh no"))?,
+    );
+    inxs.push(memo("only sign"));
+    let message = Message::new_with_blockhash(&inxs, Some(&pk), &hash);
+    let mut tx = Transaction::new_unsigned(message);
+    tx.partial_sign(&[stake_signer], hash);
     let base64_tx = BASE64_STANDARD.encode(bincode::serialize(&tx)?);
     let resp = client.sign_only("SOL_TEST", "0", base64_tx)?;
     tracing::info!("txid {resp}");
@@ -105,5 +131,14 @@ fn test_sign_only() -> anyhow::Result<()> {
     assert!(sig.is_some());
     let sig = sig.unwrap_or_default();
     tracing::info!("signOnly: sig {sig} txid {}", resp.id);
+    let decoded: Vec<u8> = solana_sdk::bs58::decode(&sig).into_vec()?;
+    let array: [u8; 64] = decoded
+        .try_into()
+        .map_err(|_| anyhow::format_err!("Invalid signature"))?;
+
+    tx.signatures[0] = Signature::from(array);
+    assert!(tx.is_signed());
+    let result = rpc.simulate_transaction(&tx)?;
+    assert!(result.value.err.is_none());
     Ok(())
 }
