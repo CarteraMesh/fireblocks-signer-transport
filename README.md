@@ -2,7 +2,7 @@
 
 [![Crates.io](https://img.shields.io/crates/v/fireblocks-signer-transport.svg)](https://crates.io/crates/fireblocks-signer-transport)
 [![Docs.rs](https://docs.rs/fireblocks-signer-transport/badge.svg)](https://docs.rs/fireblocks-signer-transport)
-[![CI](https://github.com/CarteraMesh/fireblocks-signer-transport/workflows/CI/badge.svg)](https://github.com/CarteraMesh/fireblocks-signer-transport/actions)
+[![CI](https://github.com/CarteraMesh/fireblocks-signer-transport/workflows/test/badge.svg)](https://github.com/CarteraMesh/fireblocks-signer-transport/actions)
 [![Cov](https://codecov.io/github/CarteraMesh/fireblocks-signer-transport/graph/badge.svg?token=dILa1k9tlW)](https://codecov.io/github/CarteraMesh/fireblocks-signer-transport)
 
 ## Installation

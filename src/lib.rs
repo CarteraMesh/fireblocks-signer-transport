@@ -439,7 +439,7 @@ impl Client {
         let url = self.build_url(&path);
         let extra = ExtraParameters {
             program_call_data: base64_tx,
-            use_durable_nonce: None,
+            use_durable_nonce: Some(false),
             sign_only: Some(true),
         };
 
