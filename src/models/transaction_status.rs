@@ -36,6 +36,8 @@ pub enum TransactionStatus {
     Rejected,
     #[serde(rename = "FAILED")]
     Failed,
+    #[serde(rename = "SIGNED")]
+    Signed,
 }
 
 impl TransactionStatus {
@@ -49,6 +51,7 @@ impl TransactionStatus {
                 | TransactionStatus::Confirming
                 | TransactionStatus::Failed
                 | TransactionStatus::Rejected
+                | TransactionStatus::Signed
         )
     }
 }
@@ -72,6 +75,7 @@ impl std::fmt::Display for TransactionStatus {
             Self::Blocked => write!(f, "BLOCKED"),
             Self::Rejected => write!(f, "REJECTED"),
             Self::Failed => write!(f, "FAILED"),
+            Self::Signed => write!(f, "SIGNED"),
         }
     }
 }
@@ -133,6 +137,7 @@ mod tests {
             TransactionStatus::Confirming,
             TransactionStatus::Failed,
             TransactionStatus::Rejected,
+            TransactionStatus::Signed,
         ];
 
         for status in final_statuses {
