@@ -405,6 +405,57 @@ impl Client {
         self.send(req, signed)
     }
 
+    /// Submits a Solana transaction to Fireblocks for signing.
+    ///
+    /// This method creates a Fireblocks transaction request with the provided
+    /// base64-encoded Solana transaction. Fireblocks will sign the transaction
+    ///
+    /// # Arguments
+    ///
+    /// * `asset_id` - The asset identifier (e.g., "SOL", "SOL_TEST")
+    /// * `vault_id` - The vault ID containing the signing key
+    /// * `base64_tx` - The base64-encoded serialized Solana transaction
+    ///
+    /// # Returns
+    ///
+    /// Returns a [`CreateTransactionResponse`] containing the transaction ID
+    /// and initial status information.
+    ///
+    /// # Errors
+    ///
+    /// This method can fail if:
+    /// - The API request fails
+    /// - The transaction format is invalid
+    /// - The vault or asset doesn't exist
+    /// - Fireblocks rejects the transaction
+    #[tracing::instrument(level = "debug", skip(base64_tx))]
+    pub fn sign_only(
+        &self,
+        asset_id: impl AsRef<str> + Debug,
+        vault_id: &str,
+        base64_tx: String,
+    ) -> Result<CreateTransactionResponse> {
+        let path = String::from("/v1/transactions");
+        let url = self.build_url(&path);
+        let extra = ExtraParameters {
+            program_call_data: base64_tx,
+            use_durable_nonce: None,
+            sign_only: Some(true),
+        };
+
+        let source = SourceTransferPeerPath::new(vault_id.to_string());
+        let tx = TransactionRequest::new(asset_id.as_ref().to_string(), source, extra);
+        let body = serde_json::to_vec(&tx)?;
+        let signed = self.jwt.sign(&path, &body)?;
+        let req = self
+            .client
+            .post(url)
+            .header("Content-Type", "application/json")
+            .body(body);
+
+        self.send(req, signed)
+    }
+
     /// Retrieves the current status and details of a transaction.
     ///
     /// This method queries Fireblocks for the current state of a transaction,
