@@ -39,5 +39,5 @@ solana-sdk = { version = "2", default-features = false, features = ["full"] }
 solana-pubkey = { version = "2" }
 solana-rpc-client = {version = "2" }
 spl-memo = { version = "6" }
-solana-stake-interface = { version = "1", features = ["bincode"] }
+solana-stake-interface = { version = "2", features = ["bincode"] }
 solana-native-token = { version = "2" }
