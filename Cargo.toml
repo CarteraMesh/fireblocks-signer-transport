@@ -40,4 +40,4 @@ solana-pubkey = { version = "2" }
 solana-rpc-client = {version = "2" }
 spl-memo = { version = "6" }
 solana-stake-interface = { version = "1", features = ["bincode"] }
-solana-native-token = { version = "2" }
+solana-native-token = { version = "3" }
