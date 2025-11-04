@@ -26,13 +26,14 @@ use {
 };
 
 pub static INIT: Once = Once::new();
-pub fn memo(message: &str) -> Instruction {
-    Instruction {
-        program_id: spl_memo::id(),
-        accounts: vec![],
-        data: message.as_bytes().to_vec(),
-    }
+pub fn memo(message: &str, pk: &Pubkey) -> Instruction {
+    spl_memo_interface::instruction::build_memo(
+        &spl_memo_interface::v3::id(),
+        message.as_bytes(),
+        &[pk],
+    )
 }
+
 #[allow(clippy::unwrap_used, clippy::missing_panics_doc)]
 pub fn setup() {
     INIT.call_once(|| {
@@ -81,7 +82,7 @@ fn test_client() -> anyhow::Result<()> {
     let pk = Pubkey::from_str(&client.address("0", "SOL_TEST")?)?;
     tracing::info!("using pubkey {}", pk);
     let hash = rpc.get_latest_blockhash()?;
-    let message = Message::new_with_blockhash(&[memo("fireblocks signer")], Some(&pk), &hash);
+    let message = Message::new_with_blockhash(&[memo("fireblocks signer", &pk)], Some(&pk), &hash);
     let tx = Transaction::new_unsigned(message);
     let base64_tx = BASE64_STANDARD.encode(bincode::serialize(&tx)?);
     let resp = client.program_call("SOL_TEST", "0", base64_tx)?;
@@ -115,7 +116,7 @@ fn test_sign_only() -> anyhow::Result<()> {
         &Lockup::default(),
         sol_str_to_lamports("1.4").ok_or(anyhow::format_err!("oh no"))?,
     );
-    inxs.push(memo("only sign"));
+    inxs.push(memo("only sign", &pk));
     let message = Message::new_with_blockhash(&inxs, Some(&pk), &hash);
     let mut tx = Transaction::new_unsigned(message);
     tx.partial_sign(&[stake_signer], hash);
@@ -138,7 +139,6 @@ fn test_sign_only() -> anyhow::Result<()> {
 
     tx.signatures[0] = Signature::from(array);
     assert!(tx.is_signed());
-    let result = rpc.simulate_transaction(&tx)?;
-    assert!(result.value.err.is_none());
+    rpc.send_and_confirm_transaction(&tx)?;
     Ok(())
 }
