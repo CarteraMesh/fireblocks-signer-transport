@@ -10,6 +10,7 @@ permissions:
   contents: read
 env:
   RPC_URL: ${{ secrets.RPC_URL }}
+  FIREBLOCKS_ENDPOINT: ${{ vars.FIREBLOCKS_ENDPOINT }}
   FIREBLOCKS_API_KEY: ${{ secrets.FIREBLOCKS_API_KEY }}
   FIREBLOCKS_SECRET: ${{ secrets.FIREBLOCKS_SECRET }}
   RUST_LOG: "fireblocks_signer_transport=debug"
@@ -24,6 +25,7 @@ name: test
 jobs:
   required:
     runs-on: ${{ vars.RUNNER }}
+    if: false
     name: ubuntu / ${{ matrix.toolchain }}
     strategy:
       matrix:
@@ -31,7 +33,7 @@ jobs:
         # toolchain
         toolchain: [stable]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
       - name: Install ${{ matrix.toolchain }}
@@ -64,7 +66,7 @@ jobs:
       #   if: runner.os == 'Windows'
       # - run: vcpkg install openssl:x64-windows-static-md
       #   if: runner.os == 'Windows'
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           submodules: true
       - name: Install stable
@@ -83,9 +85,11 @@ jobs:
         features:
           - "default"
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - name: Install stable
         uses: ubicloud/rust-cache@v2
+        with:
+          cache-on-failure: "true"
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: llvm-tools-preview
@@ -97,9 +101,9 @@ jobs:
       - name: cargo llvm-cov (${{ matrix.features }})
         run: |
           if [ "${{ matrix.features }}" == "default" ]; then
-            cargo llvm-cov --locked --lcov --output-path lcov-${{ matrix.features }}.info
+            cargo llvm-cov --locked --lcov --output-path lcov-${{ matrix.features }}.info --no-fail-fast -- --no-capture
           else
-            cargo llvm-cov --locked --features "${{ matrix.features }}" --lcov --output-path lcov-${{ matrix.features }}.info
+            cargo llvm-cov --locked --features "${{ matrix.features }}" --lcov --output-path lcov-${{ matrix.features }}.info --no-fail-fast -- --no-capture
           fi
       - name: Record Rust version
         run: echo "RUST=$(rustc --version)" >> "$GITHUB_ENV"

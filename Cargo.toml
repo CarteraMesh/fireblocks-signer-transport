@@ -37,12 +37,10 @@ lazy_static = "1.4.0"
 solana-instruction = { version = "3" }
 solana-keypair = { version = "3" }
 solana-message = { version = "3" }
-solana-native-token = { version = "3" }
 solana-pubkey = { version = "4" }
 solana-rpc-client = { version = "3" }
 solana-signature = { version = "3" }
 solana-signer = { version = "3" }
-solana-stake-interface = { version = "2", features = ["bincode"] }
 solana-transaction = { version = "3" }
 spl-memo-interface = { version = "2" }
 tokio = { version = "1", features = [ "full"] }

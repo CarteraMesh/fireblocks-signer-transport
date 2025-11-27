@@ -168,8 +168,8 @@ impl ClientBuilder {
     ///
     /// Returns the builder for method chaining.
     #[allow(clippy::return_self_not_must_use)]
-    pub fn with_url(mut self, url: &str) -> Self {
-        self.url = String::from(url);
+    pub fn with_url(mut self, url: impl AsRef<str>) -> Self {
+        self.url = String::from(url.as_ref());
         self
     }
 
@@ -219,8 +219,8 @@ impl ClientBuilder {
     ///
     /// Returns the builder for method chaining.
     #[allow(clippy::return_self_not_must_use)]
-    pub fn with_user_agent(mut self, ua: &str) -> Self {
-        self.user_agent = String::from(ua);
+    pub fn with_user_agent(mut self, ua: impl AsRef<str>) -> Self {
+        self.user_agent = String::from(ua.as_ref());
         self
     }
 
