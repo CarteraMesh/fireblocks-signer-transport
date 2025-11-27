@@ -237,10 +237,13 @@ impl ClientBuilder {
     /// # Errors
     ///
     /// This method can fail if:
+    /// - The API key is not a valid UUID v4 format
     /// - The RSA private key is invalid or cannot be parsed
     /// - The HTTP client cannot be configured
     /// - The JWT signer cannot be created
     pub fn build(self) -> Result<Client> {
+        uuid::Uuid::parse_str(&self.api_key)
+            .map_err(|e| FireblocksClientError::InvalidApiKey(e.to_string()))?;
         let key = EncodingKey::from_rsa_pem(&self.secret[..])?;
         let signer = JwtSigner::new(key, &self.api_key);
         let r = reqwest::blocking::ClientBuilder::new()

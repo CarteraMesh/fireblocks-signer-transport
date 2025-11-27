@@ -1,21 +1,20 @@
 use {
     base64::prelude::*,
     fireblocks_signer_transport::*,
+    solana_instruction::Instruction,
+    solana_keypair::Keypair,
+    solana_message::Message,
     solana_native_token::sol_str_to_lamports,
     solana_pubkey::Pubkey,
     solana_rpc_client::rpc_client::RpcClient,
-    solana_sdk::{
-        instruction::Instruction,
-        message::Message,
-        signature::{Keypair, Signature},
-        signer::Signer,
-        transaction::Transaction,
-    },
+    solana_signature::Signature,
+    solana_signer::Signer,
     solana_stake_interface::{
         self,
         instruction::{self as stake_instruction},
         state::{Authorized, Lockup},
     },
+    solana_transaction::Transaction,
     std::{
         env,
         str::FromStr,
@@ -132,7 +131,7 @@ fn test_sign_only() -> anyhow::Result<()> {
     assert!(sig.is_some());
     let sig = sig.unwrap_or_default();
     tracing::info!("signOnly: sig {sig} txid {}", resp.id);
-    let decoded: Vec<u8> = solana_sdk::bs58::decode(&sig).into_vec()?;
+    let decoded: Vec<u8> = bs58::decode(&sig).into_vec()?;
     let array: [u8; 64] = decoded
         .try_into()
         .map_err(|_| anyhow::format_err!("Invalid signature"))?;
@@ -141,4 +140,25 @@ fn test_sign_only() -> anyhow::Result<()> {
     assert!(tx.is_signed());
     rpc.send_and_confirm_transaction(&tx)?;
     Ok(())
+}
+
+#[test]
+fn test_invalid_api_key() {
+    let result = ClientBuilder::new("not-a-uuid", b"fake-secret").build();
+    assert!(result.is_err());
+    let err = result.unwrap_err();
+    assert!(err.to_string().contains("API key must be a valid UUID"));
+}
+
+#[test]
+fn test_invalid_secret_key() {
+    let result = ClientBuilder::new(
+        "550e8400-e29b-41d4-a716-446655440000",
+        b"not-a-valid-pem-key",
+    )
+    .build();
+    assert!(result.is_err());
+    let err = result.unwrap_err();
+    assert!(err.to_string().contains("Secret key format is invalid"));
+    assert!(err.to_string().contains("BEGIN RSA PRIVATE KEY"));
 }

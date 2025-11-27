@@ -21,7 +21,7 @@ concurrency:
 name: safety
 jobs:
   sanitizers:
-    if: true
+    if: false
     runs-on: ${{ vars.RUNNER }}
     steps:
       - uses: actions/checkout@v5

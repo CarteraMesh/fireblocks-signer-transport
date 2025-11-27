@@ -85,13 +85,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - name: Install stable
-      - uses: ubicloud/rust-cache@v2
-        with:
-          cache-on-failure: "true"
-          cache-all-crates: "true"
-          cache-workspace-crates: "true"
-          workspaces: |
-            . -> target
+        uses: ubicloud/rust-cache@v2
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: llvm-tools-preview
