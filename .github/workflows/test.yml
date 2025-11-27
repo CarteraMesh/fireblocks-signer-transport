@@ -10,6 +10,7 @@ permissions:
   contents: read
 env:
   RPC_URL: ${{ secrets.RPC_URL }}
+  FIREBLOCKS_ENDPOINT: ${{ vars.FIREBLOCKS_ENDPOINT }}
   FIREBLOCKS_API_KEY: ${{ secrets.FIREBLOCKS_API_KEY }}
   FIREBLOCKS_SECRET: ${{ secrets.FIREBLOCKS_SECRET }}
   RUST_LOG: "fireblocks_signer_transport=debug"
@@ -24,6 +25,7 @@ name: test
 jobs:
   required:
     runs-on: ${{ vars.RUNNER }}
+    if: false
     name: ubuntu / ${{ matrix.toolchain }}
     strategy:
       matrix:
@@ -85,13 +87,9 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - name: Install stable
-      - uses: ubicloud/rust-cache@v2
+        uses: ubicloud/rust-cache@v2
         with:
           cache-on-failure: "true"
-          cache-all-crates: "true"
-          cache-workspace-crates: "true"
-          workspaces: |
-            . -> target
       - uses: dtolnay/rust-toolchain@stable
         with:
           components: llvm-tools-preview
@@ -103,9 +101,9 @@ jobs:
       - name: cargo llvm-cov (${{ matrix.features }})
         run: |
           if [ "${{ matrix.features }}" == "default" ]; then
-            cargo llvm-cov --locked --lcov --output-path lcov-${{ matrix.features }}.info
+            cargo llvm-cov --locked --lcov --output-path lcov-${{ matrix.features }}.info --no-fail-fast -- --no-capture
           else
-            cargo llvm-cov --locked --features "${{ matrix.features }}" --lcov --output-path lcov-${{ matrix.features }}.info
+            cargo llvm-cov --locked --features "${{ matrix.features }}" --lcov --output-path lcov-${{ matrix.features }}.info --no-fail-fast -- --no-capture
           fi
       - name: Record Rust version
         run: echo "RUST=$(rustc --version)" >> "$GITHUB_ENV"

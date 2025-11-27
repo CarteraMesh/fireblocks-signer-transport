@@ -9,7 +9,7 @@ authors = ["gh@cartera-mesh.com"]
 documentation = "https://docs.rs/CarteraMesh"
 homepage = "https://github.com/CarteraMesh/fireblocks-signer-transport"
 keywords = ["solana", "fireblocks", "signer", "blockchain", "crypto"]
-categories = ["cryptography::cryptocurrencies" , "api-bindings"]
+categories = ["cryptography::cryptocurrencies", "api-bindings"]
 readme = "README.md"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -18,26 +18,33 @@ rustls-tls = ["reqwest/rustls-tls"]
 
 [dependencies]
 jsonwebtoken = { version = "9" }
-http = { version = "1" }
+rand = { version = "0.9" }
+reqwest = { version = "^0.12", features = ["json", "multipart", "blocking"] }
 serde = { version = "^1.0", features = ["derive"] }
 serde_json = { version = "1" }
 sha2 = { version = "0.10" }
-rand = { version = "0.9" }
-reqwest = { version = "^0.12", features = ["json", "multipart", "blocking"] }
 thiserror = "2"
 tracing = { version = "0.1" }
+uuid = "1.18.1"
 
 [dev-dependencies]
 anyhow = { version = "1" }
 base64 = { version = "0.22" }
 bincode = { version = "1" }
-tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
-tokio = { version = "1", features = [ "full"] }
-dotenvy= "0.15"
+bs58 = { version = "0.5.1", default-features = false }
+dotenvy = "0.15"
 lazy_static = "1.4.0"
-solana-sdk = { version = "3", default-features = false, features = ["full"] }
-solana-pubkey = { version = "3" }
-solana-rpc-client = {version = "3" }
+solana-instruction = { version = "3" }
+solana-keypair = { version = "3" }
+solana-message = { version = "3" }
+solana-pubkey = { version = "4" }
+solana-rpc-client = { version = "3" }
+solana-signature = { version = "3" }
+solana-signer = { version = "3" }
+solana-transaction = { version = "3" }
 spl-memo-interface = { version = "2" }
-solana-stake-interface = { version = "2", features = ["bincode"] }
-solana-native-token = { version = "3" }
+tokio = { version = "1", features = [ "full"] }
+tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
+
+[lints.clippy]
+derivable_impls = "allow"

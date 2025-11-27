@@ -17,8 +17,13 @@ pub enum FireblocksClientError {
     #[error(transparent)]
     JwtError(#[from] crate::jwt::JwtError),
 
-    #[error(transparent)]
+    #[error(
+        "Secret key format is invalid. Expected RSA private key in PEM format (-----BEGIN RSA PRIVATE KEY-----): {0}"
+    )]
     TokenError(#[from] jsonwebtoken::errors::Error),
+
+    #[error("API key must be a valid UUID v4 format: {0}")]
+    InvalidApiKey(String),
 
     #[error("{0}")]
     FireblocksServerError(String),
