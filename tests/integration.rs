@@ -21,19 +21,12 @@ use {
 
 static MEMO_MESSAGE: &str = "signed by https://github.com/carteraMesh/fireblocks-signer-transport";
 pub static INIT: Once = Once::new();
-pub fn memo(signers: &[&Pubkey]) -> Instruction {
+pub fn memo(test_name: &str, signers: &[&Pubkey]) -> Instruction {
     let message = format!(
-        "{} https://github.com/{}/actions/run/{} {}",
+        "{} {} {}",
+        test_name,
         MEMO_MESSAGE,
-        std::env::var("GITHUB_REPOSITORY")
-            .ok()
-            .unwrap_or("default".to_string()),
-        std::env::var("GITHUB_RUN_ID")
-            .ok()
-            .unwrap_or("default".to_string()),
-        std::env::var("GITHUB_JOB")
-            .ok()
-            .unwrap_or("default".to_string())
+        std::env::var("MEMO").ok().unwrap_or("default".to_string()),
     );
     build_memo(&MEMO_PROGRAM_ID, message.as_bytes(), signers)
 }
@@ -88,7 +81,7 @@ fn test_program_call() -> anyhow::Result<()> {
     span.record("pk", pk.to_string());
     tracing::info!("testing normal program_call");
     let hash = rpc.get_latest_blockhash()?;
-    let ins = vec![memo(&[&pk])];
+    let ins = vec![memo("test_program_call", &[&pk])];
     let tx = Transaction::new_unsigned(Message::new_with_blockhash(&ins, Some(&pk), &hash));
     let base64_tx = BASE64_STANDARD.encode(bincode::serialize(&tx)?);
     let resp = client.program_call("SOL_TEST", "0", base64_tx)?;
@@ -119,7 +112,7 @@ fn test_sign_only() -> anyhow::Result<()> {
     span.record("pk", pk.to_string());
     tracing::info!("using additional signer {stake_account}");
     let hash = rpc.get_latest_blockhash()?;
-    let ins = vec![memo(&[&pk, &stake_account])];
+    let ins = vec![memo("test_sign_only", &[&pk, &stake_account])];
     let message = Message::new_with_blockhash(&ins, Some(&pk), &hash);
     let mut tx = Transaction::new_unsigned(message);
     tx.partial_sign(&[stake_signer], hash);
