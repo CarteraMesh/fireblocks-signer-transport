@@ -17,3 +17,4 @@ jobs:
     secrets: inherit
     with:
       runner: ${{ inputs.runner || vars.RUNNER }}
+      enabled: true
