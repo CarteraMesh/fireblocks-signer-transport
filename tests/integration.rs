@@ -1,14 +1,13 @@
 use {
     base64::prelude::*,
     fireblocks_signer_transport::*,
-    solana_instruction::Instruction,
+    solana_client::rpc_client::RpcClient,
+    solana_client::rpc_config::CommitmentConfig,
     solana_keypair::Keypair,
-    solana_message::Message,
-    solana_pubkey::Pubkey,
-    solana_rpc_client::{api::config::CommitmentConfig, rpc_client::RpcClient},
-    solana_signature::Signature,
-    solana_signer::Signer,
-    solana_transaction::Transaction,
+    solana_sdk::{
+        instruction::Instruction, message::Message, pubkey::Pubkey, signature::Signature,
+        signer::Signer, transaction::Transaction,
+    },
     spl_memo_interface::{instruction::build_memo, v3::ID as MEMO_PROGRAM_ID},
     std::{
         env,

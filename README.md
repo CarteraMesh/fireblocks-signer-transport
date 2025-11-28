@@ -5,6 +5,12 @@
 [![CI](https://github.com/CarteraMesh/fireblocks-signer-transport/workflows/test/badge.svg)](https://github.com/CarteraMesh/fireblocks-signer-transport/actions)
 [![Cov](https://codecov.io/github/CarteraMesh/fireblocks-signer-transport/graph/badge.svg?token=dILa1k9tlW)](https://codecov.io/github/CarteraMesh/fireblocks-signer-transport)
 
+
+## Prerequisites
+
+A fireblocks account with API key.
+See developer [portal](https://developers.fireblocks.com/docs/introduction) and sign up for a [sandbox](https://developers.fireblocks.com/docs/sandbox-quickstart) account
+
 ## Installation
 
 ### Cargo
