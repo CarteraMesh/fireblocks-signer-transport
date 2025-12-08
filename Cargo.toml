@@ -17,7 +17,7 @@ readme = "README.md"
 rustls-tls = ["reqwest/rustls-tls"]
 
 [dependencies]
-jsonwebtoken = { version = "9" }
+jsonwebtoken = { version = "10" }
 rand = { version = "0.9" }
 reqwest = { version = "^0.12", features = ["json", "multipart", "blocking"] }
 serde = { version = "^1.0", features = ["derive"] }
