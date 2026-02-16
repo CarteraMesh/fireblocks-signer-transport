@@ -36,7 +36,7 @@ dotenvy = "0.15"
 lazy_static = "1.4.0"
 solana-client = { version = "3" }
 solana-keypair = { version = "3" }
-solana-sdk = { version = "3" }
+solana-sdk = { version = "4" }
 spl-memo-interface = { version = "2" }
 tokio = { version = "1", features = [ "full"] }
 tracing-subscriber = { version = "0.3", features = ["env-filter", "serde"] }
